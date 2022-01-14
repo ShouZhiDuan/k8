@@ -1,2 +1,2 @@
-# k8
+# K8
 kubernets文档
