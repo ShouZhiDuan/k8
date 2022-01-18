@@ -4,7 +4,7 @@
 >
 > `GitHub`：https://github.com/kubernetes/kubeadm
 >
-> `课程中`：使用kubeadm搭建一个3台机器组成的k8s集群，1台master节点，2台worker节点
+> 使用kubeadm搭建一个3台机器组成的k8s集群，1台master节点，2台worker节点
 >
 > **如果大家机器配置不够，也可以使用在线的，或者minikube的方式或者1个master和1个worker**
 >
@@ -13,7 +13,7 @@
 > - One or more machines running one of:
 >   - Ubuntu 16.04+
 >   - Debian 9+
->   - CentOS 7【课程中使用】
+>   - CentOS 7
 >   - Red Hat Enterprise Linux (RHEL) 7
 >   - Fedora 25+
 >   - HypriotOS v1.0.1+
