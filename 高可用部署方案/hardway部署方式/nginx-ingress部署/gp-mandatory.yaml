@@ -215,6 +215,7 @@ spec:
       serviceAccountName: nginx-ingress-serviceaccount
       hostNetwork: true
       nodeSelector:
+        # 这里需要制定集群中部署的哪台机器，通过labels选中。
         app: ingress
         kubernetes.io/os: linux
       containers:
