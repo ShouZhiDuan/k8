@@ -326,7 +326,7 @@ status:
 kubectl edit configmap coredns -n kube-system
 
 # Dashboard URL
-https://210.37.68.78:30848/
+https://210.37.68.78:30403/
 # Dashboard Token
 kubectl get secret -A
 kubectl -n kubernetes-dashboard get sa
