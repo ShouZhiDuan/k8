@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: test-ns
+  name: whoami-deployment
+  labels:
+    app: whoami-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: whoami-pod
+  template: #定义pod模板，作为上层Deployment编排对象
+    metadata:
+      labels:
+        app: whoami-pod
+    spec:
+      containers:
+      - name: whoami
+        image: jwilder/whoami
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000

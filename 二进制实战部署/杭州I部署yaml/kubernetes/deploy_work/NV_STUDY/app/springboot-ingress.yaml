@@ -1,0 +1,15 @@
+#ingress
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: study-ns
+  name: springboot-ingress
+spec:
+  rules:
+  - host: nv.study.com
+    http:
+      paths:
+      - path: /springboot
+        backend:
+          serviceName: springboot-service
+          servicePort: 80

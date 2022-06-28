@@ -1,0 +1,18 @@
+version: "3.3"
+
+services:
+  occlum:
+    container_name: occlum-scorecard-flask
+    image: nvxhub.nvxclouds.net:9443/pinfenka/scorecard-flask-sim:20220214_1
+    environment:
+      PUID: 1000
+      PGID: 1000
+      USER: $USER
+    tty: true
+    security_opt:
+      - "seccomp:unconfined"
+    cap_add:
+      - ALL
+    privileged: true
+    ports:
+      - "8000:5000"

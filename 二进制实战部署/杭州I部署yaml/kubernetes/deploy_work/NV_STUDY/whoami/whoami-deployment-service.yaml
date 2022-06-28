@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: test-ns
+  name: whoami-service
+spec:
+  selector:
+    app: whoami-pod #注意是上面POD的标签名称
+  ports:
+    - protocol: TCP
+      port: 80 #不同service可以相同
+      targetPort: 8000 #上面定义的POD里面容器的端口
+  type: ClusterIP #service类型 "ClusterIP", "ExternalName", "LoadBalancer", "NodePort"

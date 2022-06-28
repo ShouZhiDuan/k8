@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: test-ns
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.24.0 (4a2a0458)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: occlum
+  name: occlum
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: occlum
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.24.0 (4a2a0458)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: occlum
+    spec:
+      containers:
+        - env:
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+            - name: USER
+              value: root
+          image: nvxhub.nvxclouds.net:9443/pinfenka/scorecard-flask-sim:20220214_1
+          name: occlum-scorecard-flask
+          ports:
+            - containerPort: 5000
+          resources: {}
+          securityContext:
+            capabilities:
+              add:
+                - ALL
+            privileged: true
+          tty: true
+          envFrom: 
+           - configMapRef:
+                    name: score-cfm
+      restartPolicy: Always
+status: {}

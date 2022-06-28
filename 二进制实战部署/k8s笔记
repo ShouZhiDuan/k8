@@ -1,0 +1,204 @@
+>>dashboard地址<<
+https://192.168.10.122:30141/
+http://nv.study.com:8080/
+
+
+>>
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+>>>
+kubectl create sa dashboard-admin -n kube-system
+kubectl create clusterrolebinding dashboard-admin --clusterrole=cluster-admin --serviceaccount=kube-system:dashboard-admin
+ADMIN_SECRET=$(kubectl get secrets -n kube-system | grep dashboard-admin | awk '{print $1}')
+kubectl describe secret -n kube-system ${ADMIN_SECRET} | grep -E '^token' | awk '{print $2}'
+
+eyJhbGciOiJSUzI1NiIsImtpZCI6IkxrSlhneVN5ampJSUhTVFFnUlZad1U5QV9LTWlfZTVteURuSlludm11T0UifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkYXNoYm9hcmQtYWRtaW4tdG9rZW4tNzR2anciLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGFzaGJvYXJkLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiZWIxMGI0M2ItOTM4My00MzE3LWFkY2MtNTYwNjc3OWI1ZDU1Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRhc2hib2FyZC1hZG1pbiJ9.Ov6t6B-UHIcDPt-Mcmsh8VlJ_vSPQ5VmLCFCdDxh0yW1SuQVrA0jHA_NEOmc74kjF9sJXUFFOZveOYRwRRsH9MLR4VZ5i_uQ_AlcioJiL8_eu8kD-zIyM33vDioQXAF3NsdjFdaXENS1-xAf3jxcWX_BcbWWR8rlMos8DP8h5peQ9NrVKtewrwt4EzofqKtVhbu84nqRCMSMA7YU9vJ3l7WlWZWPF7X6RXqFLKVM8gm2jkVCdMUm1MLdTFaVIBtY_Wr62MEZnKVyVtbCWbQZuuTn9tg5cO6XBKv-a3tNaKD6dq9AyOobbjplJcN8Wxn0VhNrl1c_YGI3Up9Ine362Q
+
+
+
+
+
+
+
+https://www.freesion.com/article/3929749357/
+https://blog.csdn.net/xujiamin0022016/article/details/107676240
+https://blog.csdn.net/qq_33921750/article/details/121026799
+https://blog.csdn.net/K_520_W/article/details/124184472
+https://blog.csdn.net/john_f_lau/article/details/78249980
+https://blog.csdn.net/u010039418/article/details/119002574
+强制删除namespace
+https://blog.csdn.net/qq_40244755/article/details/112764837
+
+curl -k -H "Content-Type:application/json" -X PUT --data-binary @kubernetes-dashboard.json http://127.0.0.1:8081/api/v1/namespaces/kubernetes-dashboard/finalize
+
+
+
+
+ docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/metrics-server-amd64:v0.3.6 k8s.gcr.io/metrics-server-amd64:v0.3.6
+ 
+ 
+ctr -n k8s.io i tag \
+registry.cn-hangzhou.aliyuncs.com/google_containers/metrics-server-amd64:v0.3.6 \
+k8s.gcr.io/metrics-server-amd64:v0.3.6
+
+
+ctr -n k8s.io i tag \
+docker.io/juestnow/metrics-server:v0.3.7 \
+k8s.gcr.io/metrics-server/metrics-server:v0.3.7
+
+
+root@node-1:~/kubernetes/deploy_work/metrics-server/kubernetes-metrics-server# curl -k https://localhost:6443/apis/metrics.k8s.io/v1beta1
+{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {
+    
+  },
+  "status": "Failure",
+  "message": "forbidden: User \"system:anonymous\" cannot get path \"/apis/metrics.k8s.io/v1beta1\"",
+  "reason": "Forbidden",
+  "details": {
+    
+  },
+  "code": 403
+}
+
+
+cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes metrics-server-csr.json | cfssljson -bare metrics-server
+
+
+cat > auth-metrics-server.yaml << EOF
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: system:auth-metrics-server-reader
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+rules:
+- apiGroups: ["metrics.k8s.io"]
+  resources: ["pods", "nodes"]
+  verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: metrics-server:system:auth-metrics-server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-metrics-server-reader
+subjects:
+- kind: User
+  name: system:metrics-server
+  namespace: kube-system
+EOF
+
+
+--requestheader-client-ca-file=/etc/kubernetes/ssl/ca.pem --requestheader-allowed-names=aggregator,metrics-server --requestheader-extra-headers-prefix=X-Remote-Extra- --requestheader-group-headers=X-Remote-Group --requestheader-username-headers=X-Remote-User --proxy-client-cert-file=/etc/kubernetes/ssl/metrics-server.pem --proxy-client-key-file=/etc/kubernetes/ssl/metrics-server-key.pem 
+
+
+
+kubectl create clusterrolebinding system:anonymous ? --clusterrole=cluster-admin ? --user=system:anonymous
+
+
+kubectl get apiservice | grep metrics.k8s.io
+
+
+kubectl create clusterrolebinding metrics-server  --clusterrole=cluster-admin  --user=metrics-server
+
+kubectl create clusterrolebinding system:anonymous  --clusterrole=cluster-admin  --user=system:anonymous
+
+
+systemctl daemon-reload && systemctl restart kube-apiserver.service
+systemctl daemon-reload && systemctl stop kube-apiserver.service && systemctl start kube-apiserver.service
+
+
+registry.cn-qingdao.aliyuncs.com/dszk8/cnskylee_metrics-server:v0.5.0
+
+sudo yum install -y yum-utils
+
+
+
+
+- DSGX_REMOTE_ATTESTATION_HOST=118.31.4.166       
+- DSGX_REMOTE_ATTESTATION_PORT=25917
+
+- DSGX_REMOTE_ATTESTATION_HOST=121.196.216.220
+- DSGX_REMOTE_ATTESTATION_PORT=25918
+
+
+docker.io/bitnami/metrics-server                                                0.5.1               5ab55a81d50a5       64MB
+docker.io/calico/cni                                                            v3.21.2             4c5c325303915       81.7MB
+docker.io/calico/kube-controllers                                               v3.21.2             b206524060289       54.8MB
+docker.io/calico/node                                                           v3.21.2             f1bca4d4ced28       74.1MB
+docker.io/calico/pod2daemon-flexvol                                             v3.21.2             7778dd57e5063       9.17MB
+docker.io/coredns/coredns                                                       1.6.7               67da37a9a360e       13.6MB
+docker.io/juestnow/metrics-server                                               v0.3.7              07c9e703ca2c3       21MB
+k8s.gcr.io/metrics-server/metrics-server                                        v0.3.7              07c9e703ca2c3       21MB
+docker.io/jwilder/whoami                                                        latest              89be8564e6506       4.18MB
+docker.io/kubernetesui/dashboard                                                v2.5.0              57446aa2002e1       68MB
+docker.io/kubernetesui/metrics-scraper                                          v1.0.7              7801cfc6d5c07       15MB
+docker.io/library/nginx                                                         1.19                f0b8a9a541369       53.7MB
+k8s.gcr.io/pause                                                                3.2                 80d28bedfe5de       300kB
+registry.cn-hangzhou.aliyuncs.com/google_containers/metrics-server-amd64        v0.3.6              9dd718864ce61       10.5MB
+k8s.gcr.io/metrics-server-amd64                                                 v0.3.6              9dd718864ce61       10.5MB
+registry.cn-hangzhou.aliyuncs.com/kubernetes-kubespray/dns_k8s-dns-node-cache   1.16.0              90f9d984ec9a3       56.1MB
+registry.cn-qingdao.aliyuncs.com/dszk8/cnskylee_metrics-server                  v0.5.0              1c655933b9c56       25.8MB
+
+
+
+#拉取镜像
+docker pull docker.io/bitnami/metrics-server:0.5.1 
+docker pull docker.io/calico/cni:v3.21.2
+
+
+
+
+
+
+
+
+1、电信项目19.88.231.47服务器
+
+- Linux Docker部署
+
+- Linux Docker-Compose部署
+
+- MySQL部署
+
+2、poc项目
+
+- medusa部署
+
+- license部署
+
+- 调试medusa创建研究上链功能
+
+- 开发medusa基础运算，yousen页面联调
+
+- 模拟断机重启研究续跑场景（剩余70%，明日搞定）
+
+
+
+
+

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-tomcat
+  labels: 
+    app: nginx-tomcat
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 80
+  - name: tomcat
+    image: docker.io/tomcat:8.5-jre8
+    ports:
+    - containerPort: 8080
+  

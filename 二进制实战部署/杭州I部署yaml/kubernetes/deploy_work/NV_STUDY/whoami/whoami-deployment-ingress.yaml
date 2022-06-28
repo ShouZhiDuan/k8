@@ -1,0 +1,23 @@
+#ingress
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: test-ns
+  name: whoami-deployment-ingress
+spec:
+  rules:
+  - host: nv.study.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: whoami-service
+          servicePort: 80
+      - path: /env/name
+        backend:
+          serviceName: springboot-service
+          servicePort: 80
+      - path: /env/addr
+        backend:
+          serviceName: springboot-service
+          servicePort: 80

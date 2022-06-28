@@ -1,0 +1,15 @@
+#ingress
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: test-ns
+  name: score-ingress
+spec:
+  rules:
+  - host: nv.study.com
+    http:
+      paths:
+      - path: /score
+        backend:
+          serviceName: score-service
+          servicePort: 80

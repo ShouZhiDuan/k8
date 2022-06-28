@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  namespace: myns
+spec:
+  containers:
+  - name: nginx-con1
+    image: nginx
+    ports:
+    - containerPort: 80
+  - name: nginx-con2
+    image: nginx
+    ports:
+    - containerPort: 81
